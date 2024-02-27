@@ -9,29 +9,14 @@ datasource db {
 model User {
   id       String   @id @default(uuid())
   name String
-  organization Organization @relation(fields: [organizationId], references: [id])
-  organizationId String
-  dealership Dealership? @relation(fields: [dealershipId], references: [id])
-  dealershipId String?
-  dealershipMemberships DealershipMembership[]
+  email    String   @unique
+  hashedPassword String
+  role          RoleEnum
+  profileImage  String?
+  assignedClients Client[]
+  relatedEvents AppEvents[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@index([organizationId], type: Hash)
-  @@index([dealershipId], type: Hash)
-}
-
-model DealershipMembership {
-  id            String      @id @default(uuid())
-  user          User        @relation(fields: [userId], references: [id])
-  userId        String
-  dealership    Dealership  @relation(fields: [dealershipId], references: [id])
-  dealershipId  String
-  role          RoleEnum
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-
-  @@index([userId, dealershipId])
 }
 
 enum RoleEnum {
@@ -44,58 +29,42 @@ enum RoleEnum {
   OWNER
 }
 
-model Account {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  hashedPassword  String
-  organization  Organization @relation(fields: [organizationId], references: [id], "OrganizationAccounts")
-  organizationId String
-  ownedOrganization Organization? @relation("OwnerAccount")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Organization {
-  id        String   @id @default(uuid())
-  accounts Account[] @relation("OrganizationAccounts")
-  ownerAccount Account @relation(fields: [ownerAccountId], references: [id], "OwnerAccount")
-  ownerAccountId String @unique
-  name      String
-  urlPrefix String   @unique
-  dealerships  Dealership[]
-  users      User[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Dealership {
-  id            String      @id @default(uuid())
-  name          String
-  organization  Organization @relation(fields: [organizationId], references: [id])
-  organizationId String
-  clients       Client[]
-  memberships   DealershipMembership[]
-  users        User[]
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-}
-
 model Client {
   id            String      @id @default(uuid())
   name          String
   email         String
   phone         String
-  lead LeadEnum
-  dealership    Dealership @relation(fields: [dealershipId], references: [id])
-  dealershipId  String
+  lead String
+  clientPhase String
+  assignedUser User? @relation(fields: [assignedUserId], references: [id])
+  assignedUserId String?
+  interestedVehicles Vehicle[] @relation("InterestedVehicles")
+  ownedVehicles Vehicle[] @relation("OwnedVehicles")
+  clientEvents String[]
+  lastAccessed DateTime?
+  assignedDate DateTime?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
+} 
+
+model AppEvents {
+  id String @id @default(uuid())
+  description String
+  relatedParties User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-enum LeadEnum {
-  WEBSITE_INQUIRY
-  WALK_IN
-  MANUALLY_ADDED
-  UNKNOWN
+model Vehicle {
+  vinId String @id
+  make String
+  model String
+  year Int
+  color String
+  price Int
+  ownedBy Client? @relation("OwnedVehicles", fields: [clientOwnerId], references: [id])
+  clientOwnerId String?
+  interestedBy Client[] @relation("InterestedVehicles")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
