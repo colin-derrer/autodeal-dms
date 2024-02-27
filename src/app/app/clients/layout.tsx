@@ -1,10 +1,7 @@
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
 import ClientTable from "@/components/clients/ClientTable";
 import ClientTableDropdownMenu from "@/components/clients/ClientTableDropdownMenu";
 import { prisma } from "@/lib/prisma";
-import ClientDataTable from "@/components/clients/data-table/ClientDataTable";
 import { Prisma } from "@prisma/client";
 
 export type ClientWithVehicle = Prisma.ClientGetPayload<{

@@ -1,10 +1,6 @@
 import SidebarNavItem from "./sidebar-nav-item";
 import {
-  Activity,
-  AreaChart,
-  Atom,
   ChevronsUpDown,
-  Clock,
   Handshake,
   History,
   LayoutDashboard,

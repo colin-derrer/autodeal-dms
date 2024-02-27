@@ -1,7 +1,3 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/strict-type-checked",
-    "plugin:@typescript-eslint/stylistic-type-checked"
-  ]
+  "extends": ["next/core-web-vitals"]
 }

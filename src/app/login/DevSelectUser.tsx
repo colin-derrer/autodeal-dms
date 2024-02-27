@@ -9,6 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 type DevSelectUserProps = {
   users: {
@@ -37,7 +38,7 @@ export default function DevSelectUser({ users }: DevSelectUserProps) {
           className="w-full"
           onClick={handleGenerateUser}
         >
-          Generate user w/ password "password"
+          Generate user
         </Button>
         {users.map((user) => (
           <DropdownMenuItem
@@ -45,7 +46,7 @@ export default function DevSelectUser({ users }: DevSelectUserProps) {
             className="flex gap-2 items-center"
             onClick={() => setUser(user.id)}
           >
-            <img
+            <Image
               src={user.profileImage || "https://github.com/shadcn.png"}
               alt={user.name}
               className="w-8 h-8 rounded-full"
