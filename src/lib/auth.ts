@@ -16,7 +16,7 @@ export async function verifyToken(token: string) {
     );
     return verified.payload as UserJwtPayload;
   } catch (error) {
-    throw new Error("Your token is invalid.");
+    return null;
   }
 }
 

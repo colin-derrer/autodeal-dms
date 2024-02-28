@@ -15,7 +15,8 @@ export async function setUser(userId: string) {
   if (!user) return null;
   const token = await signToken({ role: user.role, userId: user.id });
   cookies().set("token", token);
-  redirect("/app");
+  console.log("Logged in as", user.name, "with role", user.role);
+  return redirect("/");
 }
 
 export async function generateUser() {

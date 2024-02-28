@@ -7,14 +7,16 @@ import { verifyToken } from "./lib/auth";
 export async function middleware(request: NextRequest) {
   const token = cookies().get("token")?.value;
   const verifiedToken = token ? await verifyToken(token) : null;
-  console.log(verifiedToken);
   if (!verifiedToken && !authRoutes.includes(request.nextUrl.pathname)) {
-    return NextResponse.redirect(new URL("/login", request.nextUrl));
+    return NextResponse.redirect(new URL("/auth", request.nextUrl));
+  }
+  if (verifiedToken && authRoutes.includes(request.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL("/", request.nextUrl));
   }
   return NextResponse.next();
 }
 
-const authRoutes = ["/login", "/signup", "/auth"];
+const authRoutes = ["/auth"];
 
 // See "Matching Paths" below to learn more
 export const config = {

@@ -22,22 +22,26 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { login } from "@/actions/authActions";
+import { login } from "@/actions/users";
 
-const formSchema = z.object({
+const registerFormSchema = z.object({
+  name: z.string().min(3).max(100),
   email: z.string().email(),
   password: z.string().min(6).max(100),
+  accessCode: z.string(),
 });
 
-export default function LoginForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+export default function RegisterForm() {
+  const form = useForm<z.infer<typeof registerFormSchema>>({
+    resolver: zodResolver(registerFormSchema),
     defaultValues: {
       email: "",
       password: "",
+      name: "",
+      accessCode: "",
     },
   });
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof registerFormSchema>) {
     const result = await login(values);
     if (result && result.error) {
       if (result.error === "Invalid password") {
@@ -57,12 +61,25 @@ export default function LoginForm() {
   return (
     <Card className="w-96">
       <CardHeader>
-        <CardTitle>Login</CardTitle>
-        <p>Please log into your account</p>
+        <CardTitle>Register</CardTitle>
+        <p>Please create a new account</p>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardContent className="flex flex-col space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="shadcn" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="email"
@@ -70,7 +87,20 @@ export default function LoginForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="example@business.org" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="accessCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Access Code</FormLabel>
+                  <FormControl>
+                    <Input placeholder="12346789" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
