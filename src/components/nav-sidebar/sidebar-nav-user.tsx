@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChevronsUpDown } from "lucide-react";
-import { signOut } from "@/actions/authActions";
+import { signOut } from "@/actions/users";
 
 export default function SidebarNavUser({ username }: { username: string }) {
   return (

@@ -1,47 +1,17 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { Prisma, RoleEnum } from "@prisma/client";
+import { cookies } from "next/headers";
 import { z } from "zod";
+import { Prisma, RoleEnum } from "@prisma/client";
 import bcrypt from "bcrypt";
-
-const createUserSchema = z.object({
-  name: z.string(),
-  email: z.string().email(),
-  hashedPassword: z.string(),
-  role: z.nativeEnum(RoleEnum),
-}) satisfies z.ZodType<Prisma.UserCreateInput>;
-
-const updateUserSchema = createUserSchema.partial().omit({ email: true });
-
-export async function createUser(
-  unparsedData: z.infer<typeof createUserSchema>
-) {
-  const parsedData = await createUserSchema.parseAsync(unparsedData);
-  parsedData.hashedPassword = await bcrypt.hash(
-    parsedData.hashedPassword,
-    process.env.BCRYPT_WORK_FACTOR
-  );
-  await prisma.user.create({ data: parsedData });
-}
-
-export async function updateUser(
-  id: string,
-  unparsedData: z.infer<typeof updateUserSchema>
-) {
-  const parsedData = await updateUserSchema.parseAsync(unparsedData);
-  if (parsedData.hashedPassword) {
-    parsedData.hashedPassword = await bcrypt.hash(
-      parsedData.hashedPassword,
-      process.env.BCRYPT_WORK_FACTOR
-    );
-  }
-  await prisma.user.update({ where: { id }, data: parsedData });
-}
-
-export async function deleteUser(id: string) {
-  await prisma.user.delete({ where: { id } });
-}
+import { redirect } from "next/navigation";
+import {
+  loginSchema,
+  registerSchema,
+  signToken,
+  verifyToken,
+} from "@/lib/auth";
 
 export async function getUser(id: string) {
   return prisma.user.findUnique({ where: { id } });
@@ -49,4 +19,80 @@ export async function getUser(id: string) {
 
 export async function getUsers() {
   return prisma.user.findMany();
+}
+
+const userSelect = {
+  id: true,
+  name: true,
+  role: true,
+  profileImage: true,
+} satisfies Prisma.UserSelect;
+
+export async function register(unparsedData: z.infer<typeof registerSchema>) {
+  const { email, password, accessCode, name } = await registerSchema.parseAsync(
+    unparsedData
+  );
+  const doesUserExist = await prisma.user.findUnique({
+    where: { email },
+  });
+  if (doesUserExist) return { error: "User already exists" };
+  if (accessCode !== process.env.REGISTER_CODE) {
+    return { error: "Invalid access code" };
+  }
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await prisma.user.create({
+    data: {
+      name,
+      email,
+      hashedPassword,
+      role: "USER",
+    },
+  });
+  const token = await signToken({ role: "USER", userId: user.id });
+  console.log(token);
+  cookies().set("token", token);
+  redirect("/");
+}
+
+export async function login(unparsedData: z.infer<typeof loginSchema>) {
+  const { email, password } = await loginSchema.parseAsync(unparsedData);
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+  if (!user) return { error: "User not found" };
+  try {
+    if (await bcrypt.compare(password, user.hashedPassword)) {
+      const token = await signToken({ role: user.role, userId: user.id });
+      cookies().set("token", token);
+      redirect("/");
+    }
+  } catch (error) {
+    return { error: "Invalid password" };
+  }
+}
+
+export async function signOut() {
+  cookies().delete("token");
+  redirect("/auth");
+}
+
+async function getToken() {
+  try {
+    const token = cookies().get("token")?.value;
+    if (!token) return null;
+    const payload = verifyToken(token);
+    return payload;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getSelfUser() {
+  const token = await getToken();
+  if (!token) return null;
+  const user = await prisma.user.findUnique({
+    where: { id: token.userId },
+    select: userSelect,
+  });
+  return user;
 }

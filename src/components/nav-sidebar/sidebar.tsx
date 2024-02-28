@@ -11,17 +11,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getSelfUser } from "@/actions/authActions";
 import SidebarNavUser from "./sidebar-nav-user";
+import { getSelfUser } from "@/actions/users";
 
 export default async function DashboardSidebar({
   className,
