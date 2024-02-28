@@ -1,4 +1,4 @@
-import { getSelfUser } from "@/actions/auth";
+import { getSelfUser } from "@/actions/authActions";
 import { redirect } from "next/navigation";
 
 export default async function RootPage() {

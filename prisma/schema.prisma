@@ -20,13 +20,9 @@ model User {
 }
 
 enum RoleEnum {
-  ALL_VIEWER
-  SALES
-  SERVICE
-  MARKETING
+  USER
   MANAGER
   ADMIN
-  OWNER
 }
 
 model Client {

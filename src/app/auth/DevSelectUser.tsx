@@ -9,7 +9,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
+import { Menu, MoreHorizontal } from "lucide-react";
 
 type DevSelectUserProps = {
   users: {
@@ -30,9 +32,11 @@ export default function DevSelectUser({ users }: DevSelectUserProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={"outline"}>DEV</Button>
+        <Button variant={"ghost"} size={"icon"}>
+          <MoreHorizontal />
+        </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-96">
+      <DropdownMenuContent className="w-72">
         <Button
           variant={"outline"}
           className="w-full"
@@ -46,16 +50,15 @@ export default function DevSelectUser({ users }: DevSelectUserProps) {
             className="flex gap-2 items-center"
             onClick={() => setUser(user.id)}
           >
-            <Image
-              src={user.profileImage || "https://github.com/shadcn.png"}
-              alt={user.name}
-              className="w-8 h-8 rounded-full"
-            />
+            <Avatar>
+              <AvatarFallback className="bg-muted text-muted-foreground">
+                {user.name.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
             <div className="flex flex-col">
               <p>{user.name}</p>
-              <p className="text-muted-foreground text-xs">
-                {user.role} - {user.email}
-              </p>
+              <p className="text-muted-foreground text-xs">{user.role}</p>
+              <p className="text-muted-foreground text-xs">{user.email}</p>
             </div>
           </DropdownMenuItem>
         ))}

@@ -9,12 +9,3 @@ declare global {
     }
   }
 }
-
-declare module "jsonwebtoken" {
-  export interface JwtPayload {
-    role: RoleEnum;
-    user_id: string;
-  }
-}
-
-export {};

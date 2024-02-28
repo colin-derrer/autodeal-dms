@@ -20,12 +20,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getSelfUser } from "@/actions/authActions";
+import SidebarNavUser from "./sidebar-nav-user";
 
 export default async function DashboardSidebar({
   className,
 }: {
   className?: string;
 }) {
+  const currentUser = await getSelfUser();
   return (
     <div
       className={cn(
@@ -33,7 +36,7 @@ export default async function DashboardSidebar({
         className
       )}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4">
         <div className="flex gap-2 items-center">
           <div>
             <Orbit className="size-10 text-primary-foreground" />
@@ -48,29 +51,7 @@ export default async function DashboardSidebar({
           </div>
         </div>
         <Separator className="bg-primary-foreground/20" />
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <div className="border border-border/20 flex p-1 items-center justify-between text-primary-foreground rounded-sm my-2">
-              <div className="flex items-center gap-2">
-                <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <p>Ella Barnett</p>
-              </div>
-              <div>
-                <ChevronsUpDown />
-              </div>
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-72">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>History</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Sign out</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <SidebarNavUser username={currentUser?.name || "Unknown name"} />
         <nav className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <h3 className="text-xs text-muted-foreground font-semibold pl-2">

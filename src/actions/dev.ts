@@ -2,21 +2,18 @@
 
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import * as jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
 import { faker } from "@faker-js/faker";
 import bcrypt from "bcrypt";
 import { cookies } from "next/headers";
+import { signToken } from "@/lib/auth";
 
 export async function setUser(userId: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });
   if (!user) return null;
-  const token = jwt.sign(
-    { role: user.role, user_id: user.id } satisfies jwt.JwtPayload,
-    process.env.JWT_SECRET
-  );
+  const token = await signToken({ role: user.role, userId: user.id });
   cookies().set("token", token);
   redirect("/app");
 }
@@ -27,7 +24,7 @@ export async function generateUser() {
     name,
     email: faker.internet.email({ firstName: name }),
     hashedPassword: await bcrypt.hash("password", 10),
-    role: "SALES",
+    role: "USER",
   } satisfies Prisma.UserCreateInput;
   const user = await prisma.user.create({ data });
   return { userId: user.id, name: user.name };

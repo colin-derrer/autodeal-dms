@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import DevSelectUser from "../auth/DevSelectUser";
+import DevSelectUser from "./DevSelectUser";
 import {
   Form,
   FormControl,
@@ -24,22 +24,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { login } from "@/actions/authActions";
 
-type LoginFormTypes = {
-  users: {
-    id: string;
-    email: string;
-    name: string;
-    role: string;
-    profileImage: string | null;
-  }[];
-};
-
 const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6).max(100),
 });
 
-export default function LoginForm({ users }: LoginFormTypes) {
+export default function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -101,7 +91,6 @@ export default function LoginForm({ users }: LoginFormTypes) {
             />
           </CardContent>
           <CardFooter className="justify-end gap-2">
-            <DevSelectUser users={users} />
             <Button>Login</Button>
           </CardFooter>
         </form>

@@ -31,7 +31,7 @@ export default async function ClientsLayout({
         </h1>
       </div>
       <div className="flex p-2 justify-between gap-2">
-        <div className="p-2 grow">
+        <div className="p-2 grow max-w-[1200px]">
           <div className="flex justify-between">
             <Input
               className="max-w-72"
@@ -42,7 +42,7 @@ export default async function ClientsLayout({
           </div>
           <ClientTable clients={clients} />
         </div>
-        <div className="p-2 grow min-w-[400px]">{children}</div>
+        <div className="p-2 grow">{children}</div>
       </div>
     </div>
   );
