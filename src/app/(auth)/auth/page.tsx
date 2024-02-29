@@ -4,6 +4,8 @@ import RegisterForm from "./RegisterForm";
 import { prisma } from "@/lib/prisma";
 import DevSelectUser from "./DevSelectUser";
 
+export const dynamic = "force-dynamic";
+
 export default async function AuthPage() {
   const users = await prisma.user.findMany({
     select: {

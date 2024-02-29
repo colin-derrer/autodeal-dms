@@ -15,11 +15,11 @@ type ClientTableRowProps = {
 export default function ClientTableRow({ client }: ClientTableRowProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const isActive = pathname.startsWith(`/app/clients/${client.id}`);
+  const isActive = pathname.startsWith(`/clients/${client.id}`);
   return (
     <TableRow
       className={cn("cursor-pointer", isActive && "bg-primary/5")}
-      onClick={() => router.push(`/app/clients/${client.id}`)}
+      onClick={() => router.push(`/clients/${client.id}`)}
     >
       <TableCell className="flex flex-col">
         <p className="font-medium text-base">{client.name}</p>

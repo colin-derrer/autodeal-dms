@@ -21,5 +21,5 @@ export async function generateClient({
   } satisfies Prisma.ClientUncheckedCreateInput;
 
   await prisma.client.create({ data: clientData });
-  revalidatePath("/app/clients");
+  revalidatePath("/clients");
 }

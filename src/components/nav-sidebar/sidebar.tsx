@@ -48,28 +48,24 @@ export default async function DashboardSidebar({
             <h3 className="text-xs text-muted-foreground font-semibold pl-2">
               MAIN
             </h3>
-            <SidebarNavItem href="/app" exact>
+            <SidebarNavItem href="/" exact>
               <LayoutDashboard />
               Dashboard
             </SidebarNavItem>
-            {/* <SidebarNavItem href="/app/analytics" exact>
-              <AreaChart />
-              Analytics
-            </SidebarNavItem> */}
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="text-xs text-muted-foreground font-semibold pl-2">
               CLIENTS
             </h3>
-            <SidebarNavItem href="/app/clients" exact>
+            <SidebarNavItem href="/clients" exact>
               <Handshake />
               Active Clients
             </SidebarNavItem>
-            <SidebarNavItem href="/app/clients/history">
+            <SidebarNavItem href="/clients/history">
               <History />
               Client History
             </SidebarNavItem>
-            <SidebarNavItem href="/app/clients/all">
+            <SidebarNavItem href="/clients/all">
               <Users />
               All Clients
             </SidebarNavItem>
@@ -79,7 +75,7 @@ export default async function DashboardSidebar({
               INVENTORY
             </h3>
             <li>
-              <SidebarNavItem href="/app/vehicles">
+              <SidebarNavItem href="/vehicles">
                 <Table2 />
                 Vehicle Database
               </SidebarNavItem>
@@ -90,14 +86,10 @@ export default async function DashboardSidebar({
               OPERATIONS
             </h3>
             <li>
-              <SidebarNavItem href="/app/team">
+              <SidebarNavItem href="/team">
                 <Shield />
                 Team
               </SidebarNavItem>
-              {/* <SidebarNavItem href="/app/performance">
-                <Activity />
-                Performance
-              </SidebarNavItem> */}
             </li>
           </div>
         </nav>

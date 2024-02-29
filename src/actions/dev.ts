@@ -7,6 +7,7 @@ import { faker } from "@faker-js/faker";
 import bcrypt from "bcrypt";
 import { cookies } from "next/headers";
 import { signToken } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 export async function setUser(userId: string) {
   const user = await prisma.user.findUnique({
@@ -28,5 +29,6 @@ export async function generateUser() {
     role: "USER",
   } satisfies Prisma.UserCreateInput;
   const user = await prisma.user.create({ data });
+  revalidatePath("/");
   return { userId: user.id, name: user.name };
 }
