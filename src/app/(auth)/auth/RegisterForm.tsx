@@ -22,7 +22,9 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { login } from "@/actions/users";
+import { login, register } from "@/actions/users";
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 const registerFormSchema = z.object({
   name: z.string().min(3).max(100),
@@ -32,6 +34,8 @@ const registerFormSchema = z.object({
 });
 
 export default function RegisterForm() {
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const form = useForm<z.infer<typeof registerFormSchema>>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
@@ -41,22 +45,24 @@ export default function RegisterForm() {
       accessCode: "",
     },
   });
+
   async function onSubmit(values: z.infer<typeof registerFormSchema>) {
-    const result = await login(values);
-    if (result && result.error) {
-      if (result.error === "Invalid password") {
-        form.setError("password", {
-          type: "manual",
-          message: "Invalid password",
-        });
-      }
-      if (result.error === "User not found") {
+    startTransition(async () => {
+      const result = await register(values);
+      if (result === "email_taken") {
         form.setError("email", {
-          type: "manual",
-          message: "User not found",
+          message: "This email is already taken",
         });
       }
-    }
+      if (result === "access_code_invalid") {
+        form.setError("accessCode", {
+          message: "Invalid access code",
+        });
+      }
+      if (result === "success") {
+        router.push("/");
+      }
+    });
   }
   return (
     <Card className="w-96">
@@ -121,7 +127,9 @@ export default function RegisterForm() {
             />
           </CardContent>
           <CardFooter className="justify-end gap-2">
-            <Button>Login</Button>
+            <Button disabled={isPending}>
+              {isPending ? "Registering..." : "Register"}
+            </Button>
           </CardFooter>
         </form>
       </Form>

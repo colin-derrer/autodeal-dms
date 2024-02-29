@@ -11,6 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import { Menu, MoreHorizontal } from "lucide-react";
+import { useTransition } from "react";
 
 type DevSelectUserProps = {
   users: {
@@ -23,9 +24,19 @@ type DevSelectUserProps = {
 };
 
 export default function DevSelectUser({ users }: DevSelectUserProps) {
-  async function handleGenerateUser() {
-    const { userId } = await generateUser();
-    await setUser(userId);
+  const [isPending, startTransition] = useTransition();
+
+  function handleGenerateUserClick() {
+    startTransition(async () => {
+      const { userId } = await generateUser();
+      await setUser(userId);
+    });
+  }
+
+  function handleUserClick(userId: string) {
+    startTransition(() => {
+      setUser(userId);
+    });
   }
 
   return (
@@ -35,32 +46,38 @@ export default function DevSelectUser({ users }: DevSelectUserProps) {
           <MoreHorizontal />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-72">
+      <DropdownMenuContent className="w-72 space-y-2">
         <Button
           variant={"outline"}
           className="w-full"
-          onClick={handleGenerateUser}
+          onClick={handleGenerateUserClick}
+          disabled={isPending}
         >
-          Generate user
+          {isPending ? "Generating user..." : "Generate user"}
         </Button>
-        {users.map((user) => (
-          <DropdownMenuItem
-            key={user.id}
-            className="flex gap-2 items-center"
-            onClick={() => setUser(user.id)}
-          >
-            <Avatar>
-              <AvatarFallback className="bg-muted text-muted-foreground">
-                {user.name.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col">
-              <p>{user.name}</p>
-              <p className="text-muted-foreground text-xs">{user.role}</p>
-              <p className="text-muted-foreground text-xs">{user.email}</p>
+        <div className="flex flex-col gap-4">
+          {users.map((user) => (
+            <div
+              key={user.id}
+              className={
+                "flex rounded-md gap-2 items-center hover:bg-muted group p-1 transition-colors duration-200" +
+                (isPending ? " opacity-50 cursor-wait" : " cursor-pointer")
+              }
+              onClick={() => handleUserClick(user.id)}
+            >
+              <Avatar>
+                <AvatarFallback className="bg-muted text-muted-foreground group-hover:bg-primary/10">
+                  {user.name.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                <p>{user.name}</p>
+                <p className="text-muted-foreground text-xs">{user.role}</p>
+                <p className="text-muted-foreground text-xs">{user.email}</p>
+              </div>
             </div>
-          </DropdownMenuItem>
-        ))}
+          ))}
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

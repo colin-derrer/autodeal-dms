@@ -28,16 +28,20 @@ const userSelect = {
   profileImage: true,
 } satisfies Prisma.UserSelect;
 
-export async function register(unparsedData: z.infer<typeof registerSchema>) {
+type REGISTER_RESPONSES = "success" | "email_taken" | "access_code_invalid";
+
+export async function register(
+  unparsedData: z.infer<typeof registerSchema>
+): Promise<REGISTER_RESPONSES> {
   const { email, password, accessCode, name } = await registerSchema.parseAsync(
     unparsedData
   );
   const doesUserExist = await prisma.user.findUnique({
     where: { email },
   });
-  if (doesUserExist) return { error: "User already exists" };
+  if (doesUserExist) return "email_taken";
   if (accessCode !== process.env.REGISTER_CODE) {
-    return { error: "Invalid access code" };
+    return "access_code_invalid";
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({
@@ -49,25 +53,30 @@ export async function register(unparsedData: z.infer<typeof registerSchema>) {
     },
   });
   const token = await signToken({ role: "USER", userId: user.id });
-  console.log(token);
   cookies().set("token", token);
-  redirect("/");
+  return "success";
 }
 
-export async function login(unparsedData: z.infer<typeof loginSchema>) {
-  const { email, password } = await loginSchema.parseAsync(unparsedData);
+type LOGIN_RESPONSES = "success" | "user_not_found" | "invalid_password";
+
+export async function login(
+  unparsedData: z.infer<typeof loginSchema>
+): Promise<LOGIN_RESPONSES> {
+  const loginData = await loginSchema.parseAsync(unparsedData);
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email: loginData.email },
   });
-  if (!user) return { error: "User not found" };
+  if (!user) return "user_not_found";
   try {
-    if (await bcrypt.compare(password, user.hashedPassword)) {
+    if (await bcrypt.compare(loginData.password, user.hashedPassword)) {
       const token = await signToken({ role: user.role, userId: user.id });
       cookies().set("token", token);
-      redirect("/");
+      return "success";
     }
+    return "invalid_password";
   } catch (error) {
-    return { error: "Invalid password" };
+    console.error(error);
+    return "invalid_password";
   }
 }
 

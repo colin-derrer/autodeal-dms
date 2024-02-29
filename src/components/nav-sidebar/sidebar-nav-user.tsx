@@ -11,8 +11,18 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChevronsUpDown } from "lucide-react";
 import { signOut } from "@/actions/users";
+import { useTransition } from "react";
+import { Button } from "../ui/button";
 
 export default function SidebarNavUser({ username }: { username: string }) {
+  const [isPending, startTransition] = useTransition();
+
+  function handleSignOutClick() {
+    startTransition(async () => {
+      await signOut();
+    });
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -33,9 +43,16 @@ export default function SidebarNavUser({ username }: { username: string }) {
       <DropdownMenuContent className="w-72">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>History</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>Sign out</DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Button
+            variant={"outline"}
+            className="w-full"
+            disabled={isPending}
+            onClick={handleSignOutClick}
+          >
+            {isPending ? "Signing out..." : "Sign out"}
+          </Button>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1,3 +1,7 @@
 export default function VehiclesPage() {
-  return <h1>Select something!</h1>;
+  return (
+    <div className="flex items-center justify-center grow">
+      <p>This page is under construction</p>
+    </div>
+  );
 }
