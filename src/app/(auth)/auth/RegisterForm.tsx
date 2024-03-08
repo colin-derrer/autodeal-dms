@@ -59,9 +59,7 @@ export default function RegisterForm() {
           message: "Invalid access code",
         });
       }
-      if (result === "success") {
-        router.push("/");
-      }
+      router.push("/")
     });
   }
   return (
@@ -99,19 +97,7 @@ export default function RegisterForm() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="accessCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Access Code</FormLabel>
-                  <FormControl>
-                    <Input placeholder="12346789" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+           
             <FormField
               control={form.control}
               name="password"
@@ -120,6 +106,19 @@ export default function RegisterForm() {
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input placeholder="********" {...field} type="password" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="accessCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Access Code</FormLabel>
+                  <FormControl>
+                    <Input placeholder="12346789" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

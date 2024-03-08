@@ -19,7 +19,36 @@ export async function generateClient({
     clientPhase: "New",
     assignedUserId: setAssignedUser,
   } satisfies Prisma.ClientUncheckedCreateInput;
-
   await prisma.client.create({ data: clientData });
+
+  revalidatePath("/clients");
+}
+
+export async function assignClient({
+  clientId,
+  assignedUserId,
+}: {
+  clientId: string;
+  assignedUserId: string;
+}) {
+  await prisma.client.update({
+    where: { id: clientId },
+    data: { assignedUserId },
+  });
+
+  revalidatePath("/clients");
+}
+
+export async function updateClient({
+  clientId, clientData
+}: {
+  clientId: string;
+  clientData: Prisma.ClientUpdateInput;
+}) {
+  await prisma.client.update({
+    where: { id: clientId },
+    data: clientData,
+  });
+
   revalidatePath("/clients");
 }

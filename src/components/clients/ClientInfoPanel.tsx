@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Client } from "@prisma/client";
+import ModifyClientDialog from "./ModifyClientDialog";
 
 type ClientInfoPanelProps = {
   client: Client;
@@ -41,7 +42,7 @@ export default function ClientInfoPanel({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>Edit client</DropdownMenuItem>
+              <ModifyClientDialog client={client} />
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

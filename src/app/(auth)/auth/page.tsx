@@ -20,7 +20,7 @@ export default async function AuthPage() {
     <div className="flex h-screen">
       <div className="w-1/2 h-full bg-primary"></div>
       <div className="w-1/2 h-full flex flex-col items-center ">
-        <Tabs defaultValue="login" className="w-[400px] pt-96">
+        <Tabs defaultValue="login" className="w-[400px] pt-24">
           <TabsList>
             <TabsTrigger value="login">Login</TabsTrigger>
             <TabsTrigger value="register">Register</TabsTrigger>
